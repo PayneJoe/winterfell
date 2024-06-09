@@ -50,12 +50,18 @@ pub fn build_prover_channel(
 }
 
 pub fn build_evaluations(trace_length: usize, lde_blowup: usize) -> Vec<BaseElement> {
+    // intialize evaluation vector with its indices
     let mut p = (0..trace_length as u128).map(BaseElement::new).collect::<Vec<_>>();
     let domain_size = trace_length * lde_blowup;
+    // padding with zeros
     p.resize(domain_size, BaseElement::ZERO);
 
+    // twiddles is half size of domain size, 2^12 * 2^3
+    // 1, w^{n/4}, w^1, w^{n/4 + 1}, w^2, w^{n/4 + 2}, ..., w^{n/4 - 1}, w^{n/2 - 1}
     let twiddles = fft::get_twiddles::<BaseElement>(domain_size);
 
+    // interpolate (evaluation) through butterfly algorithm
+    // p(1), p(w^1), p(w^2), p(w^3), ..., p(w^{n - 1})
     fft::evaluate_poly(&mut p, &twiddles);
     p
 }
@@ -100,11 +106,12 @@ fn fri_prove_verify(
     let trace_length = 1 << trace_length_e;
     // 2^3
     let lde_blowup = 1 << lde_blowup_e;
-    // 2^2
+    // 2^1, hash(a, b)
     let folding_factor = 1 << folding_factor_e;
 
     let options = FriOptions::new(lde_blowup, folding_factor, max_remainder_degree);
     let mut channel = build_prover_channel(trace_length, &options);
+    // evaluations on commit domain D
     let evaluations = build_evaluations(trace_length, lde_blowup);
 
     // instantiate the prover and generate the proof

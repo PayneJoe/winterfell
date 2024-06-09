@@ -29,6 +29,8 @@ fn fft_in_place() {
     let twiddles = super::get_twiddles::<BaseElement>(n);
     p.fft_in_place(&twiddles);
     p.permute();
+    println!("domain[1] = {}, twiddles[1] = {}", domain[1], twiddles[1]);
+    assert_eq!(domain[1], twiddles[1]);
     assert_eq!(expected, p);
 
     // degree 7
@@ -40,6 +42,8 @@ fn fft_in_place() {
     p.fft_in_place(&twiddles);
     p.permute();
     assert_eq!(expected, p);
+    assert_eq!(domain[1], twiddles[2]);
+    assert_eq!(twiddles[2].exp((n - 1) as u128), domain[n - 1]);
 
     // degree 15
     let n = 16;
@@ -97,6 +101,7 @@ fn fft_get_twiddles() {
 
     let twiddles = super::get_twiddles::<BaseElement>(n);
     assert_eq!(expected, twiddles);
+    assert_eq!(twiddles.len(), n / 2);
 }
 
 // HELPER FUNCTIONS
