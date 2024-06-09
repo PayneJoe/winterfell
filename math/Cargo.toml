@@ -45,6 +45,7 @@ criterion = "0.5"
 num-bigint = "0.4"
 proptest = "1.4"
 rand-utils = { version = "0.9", path = "../utils/rand", package = "winter-rand-utils" }
+libc-print = "0.1.23"
 
 # Allow math in docs
 [package.metadata.docs.rs]

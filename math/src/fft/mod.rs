@@ -463,8 +463,11 @@ where
         domain_size.ilog2() <= B::TWO_ADICITY,
         "multiplicative subgroup of size {domain_size} does not exist in the specified base field"
     );
+    // root is the omega
     let root = B::get_root_of_unity(domain_size.ilog2());
+    // 1, w^1, w^2, w^3, ..., w^{n/2 - 1}
     let mut twiddles = get_power_series(root, domain_size / 2);
+    // 1, w^{n/4}, w^1, w^{n/4 + 1}, w^2, w^{n/4 + 2}, ..., w^{n/4 - 1}, w^{n/2 - 1}
     permute(&mut twiddles);
     twiddles
 }

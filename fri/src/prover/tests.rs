@@ -45,6 +45,7 @@ pub fn build_prover_channel(
     trace_length: usize,
     options: &FriOptions,
 ) -> DefaultProverChannel<BaseElement, Blake3, DefaultRandomCoin<Blake3>> {
+    // security = 3 * 32 = 96 bits
     DefaultProverChannel::new(trace_length * options.blowup_factor(), 32)
 }
 
@@ -95,8 +96,11 @@ fn fri_prove_verify(
     folding_factor_e: usize,
     max_remainder_degree: usize,
 ) {
+    // 2^12
     let trace_length = 1 << trace_length_e;
+    // 2^3
     let lde_blowup = 1 << lde_blowup_e;
+    // 2^2
     let folding_factor = 1 << folding_factor_e;
 
     let options = FriOptions::new(lde_blowup, folding_factor, max_remainder_degree);
