@@ -6,10 +6,27 @@
 use alloc::vec::Vec;
 
 use super::remove_leading_zeros;
+use super::*;
 use crate::{
     field::{f128::BaseElement, FieldElement, StarkField},
     utils::get_power_series,
 };
+use libc_print::std_name::{dbg, eprintln, println};
+use rand_utils::rand_array;
+
+#[test]
+fn interpolate_batch() {
+    // fold factor is 2
+    let x_batches: Vec<[BaseElement; 8]> = vec![rand_array(), rand_array()];
+    let y_batches: Vec<[BaseElement; 8]> = vec![rand_array(), rand_array()];
+    println!("len = {}", x_batches[0].len());
+
+    let polys = super::interpolate_batch(&x_batches, &y_batches);
+    assert_eq!(polys.len(), 2);
+    for ((p, xs), ys) in polys.iter().zip(x_batches).zip(y_batches) {
+        assert_eq!(ys.to_vec(), eval_many(p, &xs));
+    }
+}
 
 #[test]
 fn eval() {

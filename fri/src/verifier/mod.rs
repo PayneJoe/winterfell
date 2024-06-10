@@ -269,6 +269,7 @@ where
             }
 
             // build a set of x coordinates for each row polynomial
+            // x coordinates of query: [(x1, -x1), (x2, -x2), ..., (xe, -xe)]
             #[rustfmt::skip]
             let xs = folded_positions.iter().map(|&i| {
                 let xe = domain_generator.exp_vartime((i as u64).into()) * self.options.domain_offset();
@@ -279,6 +280,9 @@ where
             .collect::<Vec<_>>();
 
             // interpolate x and y values into row polynomials
+            // x = [(x1, -x1), (x2, -x2), ..., (xe, -xe)]
+            // y = [(y1, y1'), (y2, y2'), ..., (ye, ye')]
+            // => g(x_i) = y_i, h(-x_i) = y_i'
             let row_polys = polynom::interpolate_batch(&xs, &layer_values);
 
             // calculate the pseudo-random value used for linear combination in layer folding
